@@ -1,6 +1,7 @@
+const path = require('path')
 var jwt = require('jsonwebtoken')
 const VARIABLE = require(path.join(__dirname, '../variable'))
-const User = require(VARIABLE.MODELS_DIR + '/User')
+const User = require(VARIABLE.MODELS_DIR + '/Users')
 
 var response_express = require(VARIABLE.LIBS_DIR + '/responses').response_express
 

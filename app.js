@@ -29,4 +29,6 @@ router.use(function(req, res, next) {
     next();
 });
 
+require('./routes/User')(router)
+
 server.listen(VARIABLE.PORT, () => console.log('tao nghe tren port : ' + VARIABLE.PORT))

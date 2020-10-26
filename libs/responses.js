@@ -1,4 +1,3 @@
-var config = require('../config');
 
 var successObj = (result) => {
 	return {

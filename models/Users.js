@@ -14,7 +14,6 @@ const userSchema = Schema({
         images : [{type : Types.ObjectId, ref : 'uploads' , default : []}],
     },
     wallets : [{type : Types.ObjectId, ref : 'wallets', default : []}],
-    balances : [{type : Types.ObjectId, ref : 'balances', default : []}],
     points : {type : Number , default : 0},
     level : {type : Number , default : 0},
     transactions : [{type : Types.ObjectId , ref : 'transactions', default:[]}],
