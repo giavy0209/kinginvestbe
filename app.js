@@ -4,7 +4,7 @@ const VARIABLE = require(path.join(__dirname, './variable'))
 const mongoose = require('mongoose')
 
 mongoose.connect(
-    `mongodb://${VARIABLE.MONGO_IP}:${VARIABLE.MONGO_PORT}/${VARIABLE.MONGO_DB_NAME}`,
+    VARIABLE.CONNECT_STRING,
     {
         useNewUrlParser: true ,
         useUnifiedTopology: true,

@@ -26,7 +26,6 @@ module.exports = async router => {
     .post('/user', async ( req, res)  => {
         let missField = lib_common.checkMissParams(res, req.body, ["email", "password", "parent", "ref_code"])
         if (missField){
-            console.log("Miss param at Create Field");
             return;
         } 
 
@@ -45,12 +44,13 @@ module.exports = async router => {
             // let a = await User.findOne({privateKey: config.ownerSecretKey})
             // console.log("sdfadsfadfasdfads")
             // console.log(a)
-            await User.findOneAndUpdate({ privateKey: config.ownerSecretKey }, { $push: { validateUser: user.addressEthereum } }).exec()
+            await Users.findOneAndUpdate({ privateKey: config.ownerSecretKey }, { $push: { validateUser: user.addressEthereum } }).exec()
             response_express.success(res);
         })
         .catch(err => {
-            response_express.exception(res, err);
+            response_express.exception(res, 'error');
         })
+        
     })
     
 
