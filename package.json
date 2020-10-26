@@ -1,7 +1,6 @@
 {
   "name": "newkinginvest",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "nodemon app.js",
@@ -20,5 +19,15 @@
     "tronweb": "^3.1.0",
     "validator": "^13.1.17",
     "web3": "^1.3.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/giavy0209/kinginvestbe.git"
+  },
+  "bugs": {
+    "url": "https://github.com/giavy0209/kinginvestbe/issues"
+  },
+  "homepage": "https://github.com/giavy0209/kinginvestbe#readme",
+  "description": ""
 }

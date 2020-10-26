@@ -4,7 +4,7 @@ const userSchema = Schema({
     email : {type : String , required : true},
     password : {type : String, required : true},
     parent : {type : Types.ObjectId , ref : 'users' , required : true},
-    childs : [{type : Types.ObjectId , ref : 'users'}],
+    childs : [{type : Types.ObjectId , ref : 'users', default:[]}],
     ref_code : {type : String , required : true},
     kyc : {
         name : {type : String, default : ''},
@@ -17,8 +17,8 @@ const userSchema = Schema({
     balances : [{type : Types.ObjectId, ref : 'balances', default : []}],
     points : {type : Number , default : 0},
     level : {type : Number , default : 0},
-    transactions : [{type : Types.ObjectId , ref : 'transactions'}],
-    invests : [{type : Types.ObjectId , ref : 'invests'}],
+    transactions : [{type : Types.ObjectId , ref : 'transactions', default:[]}],
+    invests : [{type : Types.ObjectId , ref : 'invests', default:[]}],
     create_date : {type : Date , default : new Date()}
 })
 
