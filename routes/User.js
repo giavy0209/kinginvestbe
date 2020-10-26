@@ -20,22 +20,15 @@ module.exports = async router => {
     })
 
     .post('/user', async ( req, res)  => {
-        const {
-            id ,
-            ref_code,
-            email,
-            password
-        } = req.body
-        if(!ref_code || ref_code === '')  {
-            return res.send({
-                status : 0
-            })
-        }
-        let missField = lib_common.checkMissParams(res, req.body.user, ["email", "password", "parent", "ref_code"])
+
+        let missField = lib_common.checkMissParams(res, req.body, ["email", "password", "ref_code"])
         if (missField){
-            console.log("Miss param at Create Field");
             return;
         } 
+
+        const find_parant = await Users.findOne({ref_code : req.body.ref_code})
+
+        req.body.parent = find_parant._id
 
         lib_password.cryptPassword(req.body.user.password)
         .then(passwordHash => {
@@ -52,12 +45,13 @@ module.exports = async router => {
             // let a = await User.findOne({privateKey: config.ownerSecretKey})
             // console.log("sdfadsfadfasdfads")
             // console.log(a)
-            await User.findOneAndUpdate({ privateKey: config.ownerSecretKey }, { $push: { validateUser: user.addressEthereum } }).exec()
+            await Users.findOneAndUpdate({ privateKey: config.ownerSecretKey }, { $push: { validateUser: user.addressEthereum } }).exec()
             response_express.success(res);
         })
         .catch(err => {
-            response_express.exception(res, err);
+            response_express.exception(res, 'error');
         })
+        
     })
     
 

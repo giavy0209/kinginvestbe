@@ -19,11 +19,11 @@ var exceptionObj = (message, errorCode = 404) => {
 
 var response_express = {
 	success: (res, result) => {
-		res.json(successObj(result));
+		res.send(successObj(result));
 	},
 
 	exception: (res, message, errorCode) => {
-		res.json(exceptionObj(message, errorCode));
+		res.send(exceptionObj(message, errorCode));
 	},
 };
 
