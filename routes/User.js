@@ -2,6 +2,10 @@ const {Types} = require('mongoose')
 const Users = require('../models/Users')
 const VARIABLE = require(path.join(__dirname, '../variable'))
 const lib_common = require(VARIABLE.LIBS_DIR+'/commons');
+const btc_f = require(VARIABLE.BLC_DIR + '/btc_functions');
+const erc_f = require(VARIABLE.BLC_DIR +'/erc20_functions');
+const tron_f = require(VARIABLE.BLC_DIR + '/tron_functions');
+const tomo_f = require(VARIABLE.BLC_DIR + '/tomo_functions');
 
 module.exports = async router => {
     router.get('/user', async ( req, res)  => {
@@ -20,30 +24,19 @@ module.exports = async router => {
     })
 
     .post('/user', async ( req, res)  => {
-        const {
-            id ,
-            ref_code,
-            email,
-            password
-        } = req.body
-        if(!ref_code || ref_code === '')  {
-            return res.send({
-                status : 0
-            })
-        }
-        let missField = lib_common.checkMissParams(res, req.body.user, ["email", "password", "parent", "ref_code"])
+        let missField = lib_common.checkMissParams(res, req.body, ["email", "password", "parent", "ref_code"])
         if (missField){
             console.log("Miss param at Create Field");
             return;
         } 
 
-        lib_password.cryptPassword(req.body.user.password)
+        lib_password.cryptPassword(req.body.password)
         .then(passwordHash => {
-            delete req.body.user.password;
-            req.body.user.password_hash = passwordHash;
-            req.body.user.privateKey = sha256(config.secret + req.body.user.email)
-            let wallet = new ethers.Wallet(req.body.user.privateKey)
-            req.body.user.addressEthereum = wallet.address
+            delete req.body.password;
+            req.body.password_hash = passwordHash;
+            req.body.privateKey = sha256(VARIABLE.secret + req.body.email)
+            let wallet = new ethers.Wallet(req.body.privateKey)
+            req.body.addressEthereum = wallet.address
             // console.log(req.body.user)
             return User.create(req.body.user);
         })

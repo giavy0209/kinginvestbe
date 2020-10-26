@@ -5,7 +5,7 @@ const userSchema = Schema({
     password : {type : String, required : true},
     parent : {type : Types.ObjectId , ref : 'users' , required : true},
     childs : [{type : Types.ObjectId , ref : 'users', default:[]}],
-    ref_code : {type : String , required : true},
+    ref_code : {type : String , required : true, unique: true},
     kyc : {
         name : {type : String, default : ''},
         phone: {type : String, default : ''},
