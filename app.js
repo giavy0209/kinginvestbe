@@ -22,7 +22,7 @@ const router = express.Router()
 
 app.use(router)
 router.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "kingdomgame.");
+    res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "*");
     res.header("Access-Control-Allow-Headers", "*");
     res.header("*", "*");
