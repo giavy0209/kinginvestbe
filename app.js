@@ -1,7 +1,9 @@
+const fs = require('fs')
 const http = require('http')
 const path = require('path')
 const VARIABLE = require(path.join(__dirname, './variable'))
 const mongoose = require('mongoose')
+const bodyParser = require('body-parser')
 
 mongoose.connect(
     VARIABLE.CONNECT_STRING,
@@ -20,7 +22,13 @@ const server = http.createServer(app)
 
 const router = express.Router()
 
+function requiremodels () {
+    var dirmodel = fs.readdirSync('./models')
+    dirmodel.forEach(model => require('./models/' + model))
+}requiremodels()
+
 app.use(router)
+router.use(bodyParser.json());
 router.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "kingdomgame.");
     res.header("Access-Control-Allow-Methods", "*");

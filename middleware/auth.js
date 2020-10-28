@@ -1,29 +1,24 @@
 const jwt = require('jsonwebtoken')
 const path = require('path')
 const VARIABLE = require(path.join(__dirname, '../variable'))
-const User = require(VARIABLE.models_dir + '/Users')
+const User = require(VARIABLE.MODELS_DIR + '/Users')
 const response = require(VARIABLE.LIBS_DIR + '/responses')
 
 exports.expressMiddleware = (req, res, next) => {
-    let token = req.headers['x-access-token'];
+    let token = req.headers.authorization.split(' ')[1]
     if(token){
         jwt.verify(token, VARIABLE.secret, async (err, decoded) => {
             if(err)
-                return response.response_express.exception(res, "Failed to authenticate token.")
+                return response.response_express.exception(res, "Loi o day")
             req.token_info = decoded;
-            // console.log(decoded)
             const user = await User.findById(req.token_info._id)
-                .lean()
-                .select('isValid');
-            // console.log("middlewareeeeeeeeeeeeee")
-            // console.log(user)
-            if(user == null || !user.isValid){
-                return response.response_express.exception(res, "You haven't validated yet")
+            if(!user || user.isLock === true){
+                return response.response_express.exception(res, "Loi o day 2")
             }
             next();
         });
     }else{
-        return response.response_express.exception(res, "No token provided.", 403);
+        return response.response_express.exception(res, "KDG in your eyes", 403);
     }
 }
 
@@ -32,7 +27,7 @@ exports.socketMiddleware = (socket, next) => {
     if(token === undefined || token === null){
         next(new Error('No token provided.'));
     }else{
-        jwt.verify(token, config.secret, (err, decoded) => {
+        jwt.verify(token, VARIABLE.secret, (err, decoded) => {
             if(err){
                 return(err);
             }
@@ -41,3 +36,33 @@ exports.socketMiddleware = (socket, next) => {
         next();
     }
 }
+
+exports.isAdminAuthenticated = function(req, res, next) {
+    // console.log("req.headers", req.headers)
+    if (req.headers &&
+        req.headers.authorization &&
+        req.headers.authorization.split(' ')[0] === 'Bearer') {
+
+        var jwtToken =  req.headers.authorization.split(' ')[1];
+        // console.log("jwtToken", jwtToken)
+        // console.log("config.jwtSecret", config.jwt_secret)
+        jwt.verify(jwtToken, VARIABLE.secret, function(err, payload) {
+            // console.log("err", err)
+            // console.log("payload", payload)
+            if (err) {
+                res.status(401).json({message: 'Unauthorized user!'});
+            } else {
+                // console.log('decoder: ' + payload.email);
+                // if is admin
+                if (payload.email === "admin") {
+                   // req.user = user;
+                    next();
+                } else {
+                    res.status(401).json({ message: 'Unauthorized user!' });
+                }
+            }
+        });
+    } else {
+        res.status(401).json({ message: 'Unauthorized user!' });
+    }
+};

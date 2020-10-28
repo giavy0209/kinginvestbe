@@ -1,6 +1,5 @@
 const bitcoin = require("bitcoinjs-lib")
 const fetch = require("node-fetch");
-const axios = require('axios');
 var cs = require('coinstring')
 const TOKEN = "38529529e38f4816892d512b653d4a3a";
 // var keys    = bitcoin.ECPair(bigi.fromHex("ea0fd1cffb3575b0fbd22e32593bce16402ccd396ed0640f27529c770eaa3cd2"));
