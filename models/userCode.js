@@ -3,9 +3,11 @@ const validator = require('validator')
 
 const userCodeSchema = Schema({
     email : {type: String , required : true},
-    code: {type: String, required: true}
+    code: {type: String, required: true},
+    types: {type: Number, required: true},
+    date : {type : Date, default : new Date()}
 })
 
-userCodeSchema.index({ "lastModifiedDate": 1 }, { expireAfterSeconds: 180 })
+userCodeSchema.index({ "date": 1 }, { expireAfterSeconds: 10 })
 
 module.exports = model('userCode', userCodeSchema)
