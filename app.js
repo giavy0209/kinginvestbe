@@ -39,5 +39,6 @@ router.use(function(req, res, next) {
 
 require('./routes/User')(router)
 require('./routes/Upload')(router)
+require('./routes/userHelper')(router)
 
 server.listen(VARIABLE.PORT, () => console.log('tao nghe tren port : ' + VARIABLE.PORT))
