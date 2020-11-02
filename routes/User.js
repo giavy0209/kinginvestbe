@@ -343,6 +343,22 @@ module.exports = async router => {
         }
     })
 
+    .put('/confirm-kyc',Auth.isAdminAuthenticated ,async ( req, res)  => {
+        try{
+            const {id} = req.body
+            // console.log(auth_lib.isAdminAuthenticated(req));
+            var user = await Users.findById(id)
+            if(!user){
+                return response_express.exception(res, 'have not user')
+            }
+            user.kyc.signal = true
+            await user.save()
+            return response_express.success(res, user)
+        }catch(er){
+            return response_express.exception(res, er)
+        }
+    })
+
 
     .put('/forgot-password', async ( req, res)  => {    
         try
