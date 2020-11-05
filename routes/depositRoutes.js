@@ -3,7 +3,6 @@ const twoFactor = require('node-2fa');
 
 const VARIABLE = require('../variable')
 const User = require(VARIABLE.MODELS_DIR + '/Users')
-const Invest = require(VARIABLE.MODELS_DIR + '/Invests')
 const Transaction = require(VARIABLE.MODELS_DIR + '/Transactions')
 const Balances = require(VARIABLE.MODELS_DIR + '/Balances')
 const Wallets = require(VARIABLE.MODELS_DIR + '/Wallets')
@@ -44,7 +43,7 @@ module.exports = router=>{
                 var create_tran = new Transaction({
                     user : find_user._id,
                     value : value,
-                    type : 0,
+                    type : 21,
                     from : addressTranTo,
                     to: wallet.address,
                     coin : Types.ObjectId('5f882b3e52badd1984a7f06c'),
@@ -237,7 +236,7 @@ module.exports = router=>{
                 var create_tran = new Transaction({
                     user : find_user._id,
                     value : value,
-                    type : 0,
+                    type : 21,
                     from : addressTranTo,
                     to: wallet.address,
                     coin : Types.ObjectId('5f882b3e52badd1984a7f06d'),
@@ -306,7 +305,7 @@ module.exports = router=>{
                 var create_tran = new Transaction({
                     user : find_user._id,
                     value : value,
-                    type : 0,
+                    type : 21,
                     from : addressTranTo,
                     to: wallet.address,
                     coin : Types.ObjectId('5f882b3e52badd1984a7f071'),

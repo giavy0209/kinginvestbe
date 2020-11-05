@@ -46,5 +46,7 @@ require('./routes/newRoutes')(router)
 require('./routes/Invest')(router)
 require('./routes/depositRoutes')(router)
 require('./routes/withDrawRoutes')(router)
+require('./routes/getHistoryTransaction')(router)
+require('./routes/internalTransfer')(router)
 
 server.listen(VARIABLE.PORT, () => console.log('tao nghe tren port : ' + VARIABLE.PORT))

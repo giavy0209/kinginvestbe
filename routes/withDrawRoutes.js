@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 const VARIABLE  = require('../variable')
 const fetch = require("node-fetch");
-var tronWeb = require("tronweb");
-var twoFactor = require('node-2fa');
-const uuid = require('uuid');
+var twoFactor = require('node-2fa')
 
 const btc_f = require(VARIABLE.BLC_DIR + '/btc_functions');
 const erc_f = require(VARIABLE.BLC_DIR +'/erc20_functions');
@@ -13,10 +11,8 @@ const tomo_f = require(VARIABLE.BLC_DIR + '/tomo_functions');
 const response_express = require(VARIABLE.LIBS_DIR + '/responses').response_express
 
 const User = require(VARIABLE.MODELS_DIR + '/Users')
-const Wallets = require(VARIABLE.MODELS_DIR + '/Wallets')
 const Transaction = require(VARIABLE.MODELS_DIR + '/Transactions')
 const Balances = require(VARIABLE.MODELS_DIR + '/Balances')
-const Coins = require(VARIABLE.MODELS_DIR + '/Coins')
 var Auth = require(VARIABLE.AUTH_DIR + '/auth'); 
 
 const etherscan_api = "R6UWHB51I91M8H1W9A9C9M26UEYPGV392F";
@@ -40,7 +36,7 @@ var TRXWALLET = {
 
 module.exports = (router) => {
     router.post(`/withdraw`, Auth.expressMiddleware, async (req, res) => {
-        const { type, toAddress, value, token } = req.body;
+        const {type, toAddress, value, token } = req.body;
         const id = req.token_info._id
 
         if(!toAddress || value === 0 || toAddress === '' || !value){
@@ -133,7 +129,7 @@ module.exports = (router) => {
                 var create_tran = new Transaction({
                     user : find_user._id,
                     value : value,
-                    type : 1,
+                    type : 22,
                     from : wallet.address,
                     to: toAddress,
                     coin : Types.ObjectId('5f882b3e52badd1984a7f06c'),
@@ -329,7 +325,7 @@ module.exports = (router) => {
                 var create_tran = new Transaction({
                     user : find_user._id,
                     value : value,
-                    type : 1,
+                    type : 22,
                     from : wallet.address,
                     to: toAddress,
                     coin : Types.ObjectId('5f882b3e52badd1984a7f06d'),
@@ -348,6 +344,10 @@ module.exports = (router) => {
             }
         }
         else if(type === "kdg") {
+            return {
+                status : 0,
+                msg : 'not available'
+            }
             var find_coin = find_user.balances.find(o => o.coin.code === 'KDG')
             var find_balance = find_coin.balance
 
@@ -381,40 +381,40 @@ module.exports = (router) => {
             return res.status(200).send({
                 status: 1,
             });
-        }else if(type === "usdt-trc20") {
-            var find_coin = find_user.balances.find(o => o.coin.code === 'USDT')
-            var find_balance = find_coin.balance
-
-            if(find_balance < value + 0.5) {
-                return res.send({
-                    status : 0,
-                    msg : 'not enought USDT'
-                })
+        }
+        else if(type === "usdt-trc20") {
+            if(value < 1) {
+                return response_express.exception(res,'you must withdraw min 1 usdt')
+            }
+            const wallet = find_user.wallets.find(o=>o.chain === mongoose.Types.ObjectId('5f8a65586927ca2d6cfea93a'))
+            var find_balance = wallet.balances.find(o => o.coin === mongoose.Types.ObjectId('5f882b3e52badd1984a7f071'))
+            if(find_balance.balance < value + 1) {
+                return response_express.exception(res,'not enought USDT')
             }
             
-            var txId = await tron_f.sendUSDT(TRXWALLET.private_key, toAddress, value);
+            var txId = await tron_f.sendUSDT(VARIABLE.PRIVATE_KEY_TRC20, toAddress, value);
 
-            var create_tran = new BlockchainTransaction({
-                user : find_user._id,
-                wallets : find_user.wallets._id,
-                coin : find_coin.coin._id,
-                create_date : new Date(),
-                from : find_user.wallets.find(o => o.chain.name === 'TRC20').address,
-                to : toAddress,
-                value : value,
-                type : 0,
-                txId
-            })
+            if(txId.status === 1){
+                var create_tran = new Transaction({
+                    user : find_user._id,
+                    value : value,
+                    type : 22,
+                    from : wallet.address,
+                    to: toAddress,
+                    coin : Types.ObjectId('5f882b3e52badd1984a7f071'),
+                })
+    
+                await create_tran.save()
+    
+                find_user.transactions.push(create_tran._id)
 
-            await create_tran.save()
-
-            var find_current_balance_of_coin = await Balances.findOne({user : find_user._id , coin :find_coin.coin._id})
-            find_current_balance_of_coin.balance = find_current_balance_of_coin.balance - value - 0.5
-            await find_current_balance_of_coin.save()
-
-            return res.status(200).send({
-                status: 1,
-            });
+                var current_balance = await Balances.findOne({user:find_user._id, coins:Types.ObjectId('5f882b3e52badd1984a7f071')})
+                current_balance = current_balance - value
+                await current_balance.save()
+                return response_express.success(res,current_balance)
+            }else{
+                return response_express.exception(res, 'fail')
+            }
         }
         else if(type === "tomo") {
             return {
@@ -460,136 +460,9 @@ module.exports = (router) => {
         }
         
         else {
-            return res.status(200).send({
-                status: 1,
-                msg: "deposit type empty or wrong",
-            });
+            return response_express.exception(res,'deposit type empty or wrong')
         }
     });
- 
-//     router.get(`/blockchain_transaction`, auth_controller.isAuthenticated, async (req, res) => {
-//         const { coin_type, address, begin_date, take, skip } = req.query;
-//         try
-//         {
-//             if(coin_type === "btc") {
-
-//                 var link = "https://blockchain.info/rawaddr/" + address; //+ "?skip=" + skip + "&limit=" + take;
-//                 var data_2 = await fetch(link);
-//                 var data = await data_2.json();
-//                 return res.status(200).send({
-//                                             status: 1,
-//                                             data: data,
-//                                         });
-//             }
-//             else if(coin_type === "eth") {
-//                 var link = "https://api.etherscan.io/api?module=account&action=txlist&apikey=" + etherscan_api 
-//                          + "&address=" + address + "&startblock=" + "0" + "&endblock=99999999&sort=desc&offset=" + take + "&page=" + skip;
-//                 var data = await fetch(link);
-//                 data = await data.json();
-                
-//                 return res.status(200).send({
-//                                             status: 1,
-//                                             data: data,
-//                                         });
-//             }
-//             else if(coin_type === "usdt") {
-//                 var link = "https://api.etherscan.io/api?module=account&action=tokentx&apikey=" + etherscan_api 
-//                          + "&contractaddress=" + USDT_CONTRACT          
-//                          + "&address=" + address + "&startblock=" + "0" + "&endblock=99999999&sort=desc&offset=" + take + "&page=" + skip;
-//                 var data = await fetch(link);
-//                 data = await data.json();
-                
-//                 return res.status(200).send({
-//                                             status: 1,
-//                                             data: data,
-//                                         });
-//             }
-//             else if(coin_type === "knc") {
-//                 var link = "https://api.etherscan.io/api?module=account&action=tokentx&apikey=" + etherscan_api 
-//                          + "&contractaddress=" + KNC_CONTRACT          
-//                          + "&address=" + address + "&startblock=" + "0" + "&endblock=99999999&sort=desc&offset=" + take + "&page=" + skip;
-//                 var data = await fetch(link);
-//                 data = await data.json();
-                
-//                 return res.status(200).send({
-//                                             status: 1,
-//                                             data: data,
-//                                         });
-//             }
-//              else if(coin_type === "mch") {
-//                 var link = "https://api.etherscan.io/api?module=account&action=tokentx&apikey=" + etherscan_api 
-//                          + "&contractaddress=" + MCH_CONTRACT          
-//                          + "&address=" + address + "&startblock=" + "0" + "&endblock=99999999&sort=desc&offset=" + take + "&page=" + skip;
-//                 var data = await fetch(link);
-//                 data = await data.json();
-                
-//                 return res.status(200).send({
-//                                             status: 1,
-//                                             data: data,
-//                                         });
-//             }
-//             else if(coin_type === "tron") {
-//                 // begin_date = "yyyy-mm-dd"
-//                 var date_to_unix = new moment(begin_date).valueOf(); //; moment(new Date()).valueOf();
-//                 var link = "https://apilist.tronscan.org/api/transfer?sort=-timestamp&count=true&limit=" + take + "&start=" + skip + "&token=_&address=" + address;
-//                 // var link = "https://api.trongrid.io/v1/accounts/" + address 
-//                 //         + "/transactions?order_by=block_timestamp,desc&limit=" + take +"&only_to=true&only_confirmed=true&min_timestamp=" + date_to_unix;
-//                 var data = await fetch(link);
-//                 data = await data.json();
-                
-//                 return res.status(200).send({
-//                                             status: 1,
-//                                             data: data,
-//                                         });
-//             }
-//             else if(coin_type === "kdg") {
-//                 var date_to_unix = new moment(begin_date).valueOf(); //; moment(new Date()).valueOf();
-//                 var link = "https://apilist.tronscan.org/api/contract/events?address=" 
-//                         + address + "&limit=" + take + "&start_timestamp=" + date_to_unix + "&contract=" + KDG_CONTRACT;
-//                 var data = await fetch(link);
-//                 data = await data.json();
-                
-//                 return res.status(200).send({
-//                                             status: 1,
-//                                             data: data,
-//                                         });
-//             }
-//             else if(coin_type === "tomo") {
-//                 var link = "https://scan.tomochain.com/api/txs/listByAccount/" + address + "?skip=" + skip + "&limit=" + take;
-//                 var data = await fetch(link);
-//                 data = await data.json();
-                
-//                 return res.status(200).send({
-//                                             status: 1,
-//                                             data: data,
-//                                         });
-//             }
-//              else if(coin_type === "usdt-trc20") {
-//                 var date_to_unix = new moment(begin_date).valueOf(); //; moment(new Date()).valueOf();
-//                 var link = "https://apilist.tronscan.org/api/contract/events?address=" 
-//                         + address + "&limit=" + take + "&start_timestamp=" + date_to_unix + "&contract=" + USDT_TRC20_CONTRACT;
-//                 var data = await fetch(link);
-//                 data = await data.json();
-                
-//                 return res.status(200).send({
-//                                             status: 1,
-//                                             data: data,
-//                                         });
-//             }
-//             else {
-//                 return res.status(200).send({
-//                     status: 1,
-//                     err: "wrong coin type",
-//                 });
-//             }
-//         }
-//         catch(er){
-//             return res.status(200).send({
-//                                         status: 0,
-//                                         err: er,
-//                                     });
-//         }
-//     });
 // //
 //     router.post(`/convert_kdg_reward`, auth_controller.isAuthenticated, async (req, res) => {
 //         const { userId, value } = req.body;
@@ -677,7 +550,7 @@ module.exports = (router) => {
 //             }
 //         }          
 //     });
-// //
+
 //     router.post(`/convert_kdg`, auth_controller.isAuthenticated, async (req, res) => {
 //         const { userId, value } = req.body;
 
