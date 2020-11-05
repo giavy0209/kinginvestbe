@@ -113,9 +113,8 @@ const sendUSDTToRoot = async(fromAddress, privateKey, value) => {
 }
 
 const sendETH = async ( fromAddress, privateKey, toAddress, value = FEE_ERC20, gasPrice = 30,gasLimit = 21000) => {
-    privateKey = Buffer.from(privateKey, "hex");
+    privateKey = Buffer.from(privateKey.substring(2,66), "hex")
     let gasPrices = await getCurrentGasPrices()
-    console.log("gas price:", gasPrices)
 
     try {
         const txCount = await web3.eth.getTransactionCount(fromAddress, "pending");
@@ -125,6 +124,7 @@ const sendETH = async ( fromAddress, privateKey, toAddress, value = FEE_ERC20, g
           value: web3.utils.toHex(web3.utils.toWei(value.toString(), "ether")),
           gasLimit: web3.utils.toHex(gasLimit),
           gasPrice: gasPrices.medium * 1000000000, //web3.utils.toHex(web3.utils.toWei(gasPrice.toString(), "gwei"))
+        //   data: '0x'
         };
         const tx = new Tx(txObject);
         tx.sign(privateKey);

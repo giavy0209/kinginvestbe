@@ -7,6 +7,7 @@ const Upload = require(VARIABLE.MODELS_DIR + '/Uploads')
 const User = require(VARIABLE.MODELS_DIR + '/Users')
 const Auth = require(VARIABLE.AUTH_DIR + '/auth')
 const shortid= require('shortid')
+const response_express = require(VARIABLE.LIBS_DIR + '/responses').response_express
 
 module.exports = async router =>{
     const upload = multer({
@@ -34,6 +35,9 @@ module.exports = async router =>{
         img.path = '/public/kyc_img/' + img._id + ex
         img.save()
         var user = await Users.findById(req.token_info._id)
+        if(user.kyc.images.length >= 3){
+            return response_express.exception(res,'Thua anh')
+        }
         user.kyc.images.push(img._id)
         user.save()
         console.log(file.filename);
@@ -42,9 +46,9 @@ module.exports = async router =>{
         
         // fs.renameSync(path.join(__dirname, `../public/${file.originalname}`),path.join(__dirname, `../public/uploads/${img._id + ex}`))
             
-        res.send({msg:'success', file: img})
+        return response_express.success(res, {msg:'success', file: img})
     }, (error, req, res, next) =>{
-        res.status(400).send({error: error.message})
+        return response_express.exception(res,{error: error.message} )
     })
 
     router.get('/upload',Auth.expressMiddleware, async (req,res)=>{
@@ -56,7 +60,7 @@ module.exports = async router =>{
             .populate({
                 path: 'kyc.images'
             })
-            return res.send({images: user.kyc.images})
+            return response_express.success(res, {images: user.kyc.images})
         } catch (error) {
             console.log('get_uploads err', error);
         }
@@ -69,9 +73,33 @@ module.exports = async router =>{
         try {
             const files = await Upload.find({})
             const totalItem = await Upload.countDocuments({})
-            return res.send({listImage: files,itemPerPage: 50, totalItem})
+            return response_express.success(res, {listImage: files,itemPerPage: 50, totalItem})
         } catch (error) {
             console.log('get_uploads err', error);
+        }
+    })
+
+    router.delete('/upload_admin',Auth.isAdminAuthenticated, async (req,res)=>{
+        // const type = req.query.type
+        // if(!type) return res.send({msg: 'Không có type'})
+
+        try {
+            const files = await Upload.find({})
+            const totalItem = await Upload.countDocuments({})
+            return response_express.success(res, {listImage: files,itemPerPage: 50, totalItem})
+        } catch (error) {
+            console.log('get_uploads err', error);
+        }
+    })
+    router.delete('/upload', Auth.isAdminOrUserAuthenticated, async (req, res) => {
+        const file = req.query.file
+        if(!file) return res.send({msg: 'Chưa có file'})
+        try {
+            await Upload.findOneAndDelete({path: file})
+            fs.unlinkSync(path.join(__dirname,'../public/kyc_img' , file))
+            return response_express.success(res,{msg: 'success', deletedFile: file})
+        } catch (error) {
+            console.log('delete_uploads err', error);
         }
     })
 }

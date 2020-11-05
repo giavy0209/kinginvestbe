@@ -40,5 +40,11 @@ router.use(function(req, res, next) {
 require('./routes/User')(router)
 require('./routes/Upload')(router)
 require('./routes/userHelper')(router)
+require('./routes/securityRoutes')(router)
+require('./routes/getInfoBlcRoutes')(router)
+require('./routes/newRoutes')(router)
+require('./routes/Invest')(router)
+require('./routes/depositRoutes')(router)
+require('./routes/withDrawRoutes')(router)
 
 server.listen(VARIABLE.PORT, () => console.log('tao nghe tren port : ' + VARIABLE.PORT))

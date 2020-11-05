@@ -1,5 +1,6 @@
 
 var successObj = (result) => {
+	console.log(result);
 	return {
 		'status':1,
 		'result': result,

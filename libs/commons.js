@@ -13,8 +13,8 @@ function findMissParams(obj, checkProps) {
 	var missProps = [];
 
 	checkProps.forEach(prop=> {
-		if (!obj[prop]) {
-			missProps.push(checkProps[i]);
+		if (!Object.keys(obj).includes(prop)) {
+			missProps.push(prop);
 		}
 	})
 

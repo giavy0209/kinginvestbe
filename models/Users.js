@@ -26,7 +26,11 @@ const userSchema = Schema({
         phone: {type : String, default : ''},
         birthday :{type : String, default : ''},
         id : {type : String, default : ''},
-        images : [{type : Types.ObjectId, ref : 'uploads' , default : []}],
+        images : [{
+            type : Types.ObjectId,
+            ref : 'uploads' ,
+            default : []
+        }],
         signal: {type: Boolean, default: false},
         last_date : {type : Date}
     },
@@ -36,7 +40,14 @@ const userSchema = Schema({
     transactions : [{type : Types.ObjectId , ref : 'transactions', default:[]}],
     invests : [{type : Types.ObjectId , ref : 'invests', default:[]}],
     isLock: {type: String, default: false},
+    is2FA :{type: Boolean, default: false},
+    google_authenticator_secrect_key: {type: String, default: ''},
     create_date : {type : Date , default : new Date()}
 })
+userSchema.path('kyc.images').validate(function (value) {
+    if (value.length > 3) {
+      throw new Error("Assigned person's size can't be greater than 10!");
+    }
+  });
 
 module.exports = model('users', userSchema)

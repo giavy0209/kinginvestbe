@@ -66,3 +66,32 @@ exports.isAdminAuthenticated = function(req, res, next) {
         res.status(401).json({ message: 'Unauthorized user!' });
     }
 };
+
+exports.isAdminOrUserAuthenticated = function(req, res, next) {
+    // console.log("req.headers", req.headers)
+    if (req.headers &&
+        req.headers.authorization &&
+        req.headers.authorization.split(' ')[0] === 'Bearer') {
+
+        var jwtToken =  req.headers.authorization.split(' ')[1];
+        // console.log("jwtToken", jwtToken)
+        // console.log("config.jwtSecret", config.jwt_secret)
+        jwt.verify(jwtToken, VARIABLE.secret, async function(err, payload) {
+            if (err) {
+                res.status(401).json({message: 'Unauthorized user!'});
+            } else {
+                // console.log('decoder: ' + payload.email);
+                // if is admin
+                const user = await User.findById(req.token_info._id)
+                if (user || payload.email === "admin") {
+                   // req.user = user;
+                    next();
+                } else {
+                    res.status(401).json({ message: 'Unauthorized user!' });
+                }
+            }
+        });
+    } else {
+        res.status(401).json({ message: 'Unauthorized user!' });
+    }
+};
