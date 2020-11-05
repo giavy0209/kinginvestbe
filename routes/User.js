@@ -125,7 +125,7 @@ module.exports = async router => {
             }
         }
         catch(er){
-            return response_express.exception(res, 'Server iss not response!')
+            return response_express.exception(res, 'Server is not response!')
         }
     })
 
@@ -134,7 +134,9 @@ module.exports = async router => {
         let missField = lib_common.checkMissParams(res, req.body, ["email", "password","ref_code"])
         if (missField){
             console.log("Miss param at Create Field");
-            return;
+            return res.send({
+                status : 100,
+            });
         } 
 
         lib_password.cryptPassword(req.body.password)
@@ -146,7 +148,6 @@ module.exports = async router => {
 
             var user = new Users(req.body)
             user.ref_code = user._id
-            // console.log(req.body.user)
             var btc_wallet = await btc_f.createBTCWallet();
             var wl1 = new Wallets({
                 user: user._id,
@@ -154,7 +155,6 @@ module.exports = async router => {
                 address: btc_wallet.address,
                 private_key: btc_wallet.privateKey
             })
-            // await user.save()
             var balance1 = new Balances({
                 user : user._id,
                 chain : '5f8a664dec6abf1b6089bda3',
