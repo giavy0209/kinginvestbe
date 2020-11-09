@@ -1,10 +1,16 @@
 const path = require('path')
 const nodemailer = require("nodemailer");
+const fetch = require('node-fetch')
+
 const VARIABLE = require(path.join(__dirname, '../variable'))
 const response_express = require(VARIABLE.LIBS_DIR + '/responses').response_express
-const validator = require('validator')
-const Users = require('../models/Users')
-const UserCode = require('../models/userCode');
+const validator = require('validator');
+const { Types } = require('mongoose');
+const Balances = require(VARIABLE.MODELS_DIR + '/Balances');
+const User = require(VARIABLE.MODELS_DIR + '/Users')
+const Invest = require(VARIABLE.MODELS_DIR + '/Invests')
+const UserCode = require(VARIABLE.MODELS_DIR + '/userCode');
+const Auth = require(VARIABLE.AUTH_DIR + '/auth')
 
 module.exports = (router)=>{
     router.post('/create-register-code',async (req, res)=>{
@@ -85,11 +91,66 @@ module.exports = (router)=>{
         }
     });
 
+    router.get(`/get_asset_total_user`, Auth.expressMiddleware, async (req, res) => {
+        const id = req.token_info._id
+        var totalAsset = 0
+        var totalProfit = 0
+        var totalInvest = 0
+        var rewardPoint = 0
+
+        var rateEther
+        var rateTrx
+        var rateUSDTTrx
+        try
+        {
+            const user = await User.findById(id)
+            const balanceETH = await Balances.findOne({user:Types.ObjectId(id), coins:Types.ObjectId('5f882b3e52badd1984a7f06c')})
+            const balanceTrx = await Balances.findOne({user:Types.ObjectId(id), coins:Types.ObjectId('5f882b3e52badd1984a7f06d')})
+            const balanceUsdtTrx = await Balances.findOne({user:Types.ObjectId(id), coins:Types.ObjectId('5f882b3e52badd1984a7f071')})
+            var invests = await Invest.find({user: Types.ObjectId(id)})
+            var linkTrx = "https://api.coingecko.com/api/v3/simple/price?ids=tron&vs_currencies=usd";
+            var data = await fetch(linkTrx);
+            data = await data.json();
+            rateTrx = data.tron.usd
+
+            var linkEth = "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd";
+            var data = await fetch(linkEth);
+            data = await data.json();
+            rateEther = data.ethereum.usd
+            
+            var linkTether = "https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=usd";
+            var data = await fetch(linkTether);
+            data = await data.json();
+            rateUSDTTrx = data.tether.usd
+
+            totalAsset = balanceETH.balance*rateEther + balanceTrx.balance*rateTrx + balanceUsdtTrx.balance*rateUSDTTrx
+            for (let index = 0; index < invests.length; index++) {
+                totalProfit = totalProfit + invests[index].current_profit
+                totalInvest = totalInvest + invests[index].value
+            }
+            rewardPoint = user.points
+
+
+            return response_express.success(res,{
+                totalAsset: totalAsset,
+                totalProfit: totalProfit,
+                totalInvest: totalInvest,
+                rewardPoint: rewardPoint
+            })
+        }
+        catch(er){
+            return response_express.exception(res,er)
+        }
+    });
+
     function getRandomInt(min, max) {
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
-    }
+    }   
+
+
+
 
     async function send_email(toAddress, subject, textBody) {
         // console.log("send_email")

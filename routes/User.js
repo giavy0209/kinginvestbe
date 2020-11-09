@@ -150,16 +150,16 @@ module.exports = async router => {
             var btc_wallet = await btc_f.createBTCWallet();
             var wl1 = new Wallets({
                 user: user._id,
-                chain: '5f8a664dec6abf1b6089bda3',
+                chain: '5fa8ac7b2c89c5229459f9f3',
                 address: btc_wallet.address,
                 private_key: btc_wallet.privateKey
             })
             // await user.save()
             var balance1 = new Balances({
                 user : user._id,
-                chain : '5f8a664dec6abf1b6089bda3',
+                chain : '5fa8ac7b2c89c5229459f9f3',
                 wallet : wl1._id,
-                coins : '5f882b3e52badd1984a7f06b',
+                coins : '5fa8ac7b2c89c5229459f9f4',
             })
 
             wl1.balances.push(balance1._id)
@@ -171,34 +171,34 @@ module.exports = async router => {
             var erc_wallet = await erc_f.createERCWallet();
             var wl2 = new Wallets({
                 user: user._id,
-                chain: '5f8a6538a492ec0834bbc7c4',
+                chain: '5fa8ac7b2c89c5229459f9fb',
                 address: erc_wallet.address,
                 private_key: erc_wallet.privateKey
             })
             var balance2 = new Balances({
                 user : user._id,
-                chain : '5f8a6538a492ec0834bbc7c4',
+                chain : '5fa8ac7b2c89c5229459f9fb',
                 wallet : wl2._id,
-                coins : '5f882b3e52badd1984a7f06c',
+                coins : '5fa8ac7b2c89c5229459f9fc',
             })
 
             var balance3 = new Balances({
                 user : user._id,
-                chain : '5f8a6538a492ec0834bbc7c4',
+                chain : '5fa8ac7b2c89c5229459f9fb',
                 wallet : wl2._id,
-                coins : '5f882b3e52badd1984a7f06f',
+                coins : '5fa8ac7b2c89c5229459f9fd',
             })
             var balance4 = new Balances({
                 user : user._id,
-                chain : '5f8a6538a492ec0834bbc7c4',
+                chain : '5fa8ac7b2c89c5229459f9fb',
                 wallet : wl2._id,
-                coins : '5f882b3e52badd1984a7f070',
+                coins : '5fa8ac7b2c89c5229459f9fe',
             })
             var balance5 = new Balances({
                 user : user._id,
-                chain : '5f8a6538a492ec0834bbc7c4',
+                chain : '5fa8ac7b2c89c5229459f9fb',
                 wallet : wl2._id,
-                coins : '5f8a76a384349519a464f8c2',
+                coins : '5fa8ac7c2c89c5229459f9ff',
             })
 
             wl2.balances.push(balance2._id)
@@ -217,28 +217,28 @@ module.exports = async router => {
             var trx_wallet = await tron_f.createTRXWallet();
             var wl3 = new Wallets({
                 user: user._id,
-                chain: '5f8a65586927ca2d6cfea93a',
+                chain: '5fa8ac7b2c89c5229459f9f5',
                 address: trx_wallet.address,
                 private_key: trx_wallet.privateKey
             })
 
             var balance6 = new Balances({
                 user : user._id,
-                chain : '5f8a65586927ca2d6cfea93a',
+                chain : '5fa8ac7b2c89c5229459f9f5',
                 wallet : wl3._id,
-                coins : '5f882b3e52badd1984a7f06d',
+                coins : '5fa8ac7b2c89c5229459f9f6',
             })
             var balance7 = new Balances({
                 user : user._id,
-                chain : '5f8a65586927ca2d6cfea93a',
+                chain : '5fa8ac7b2c89c5229459f9f5',
                 wallet : wl3._id,
-                coins : '5f882b3e52badd1984a7f06e',
+                coins : '5fa8ac7b2c89c5229459f9f7',
             })
             var balance8 = new Balances({
                 user : user._id,
-                chain : '5f8a65586927ca2d6cfea93a',
+                chain : '5fa8ac7b2c89c5229459f9f5',
                 wallet : wl3._id,
-                coins : '5f882b3e52badd1984a7f071',
+                coins : '5fa8ac7b2c89c5229459f9f8',
             })
 
             wl3.balances.push(balance6._id)
@@ -254,16 +254,16 @@ module.exports = async router => {
             var tomo_wallet = await tomo_f.createTOMOWallet();
             var wl4 = new Wallets({
                 user: user._id,
-                chain: '5f8a652f971ce603ac432a0a',
+                chain: '5fa8ac7b2c89c5229459f9f9',
                 address: tomo_wallet.address,
                 private_key: tomo_wallet.privateKey
             })
 
             var balance9 = new Balances({
                 user : user._id,
-                chain : '5f8a652f971ce603ac432a0a',
+                chain : '5fa8ac7b2c89c5229459f9f9',
                 wallet : wl4._id,
-                coins : '5f882b3e52badd1984a7f072',
+                coins : '5fa8ac7b2c89c5229459f9fa',
             })
             wl4.balances.push(balance9._id)
             user.wallets.push(wl4._id)

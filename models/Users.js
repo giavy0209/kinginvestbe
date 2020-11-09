@@ -42,6 +42,7 @@ const userSchema = Schema({
     isLock: {type: String, default: false},
     is2FA :{type: Boolean, default: false},
     google_authenticator_secrect_key: {type: String, default: ''},
+    reinvest_balance: {type: Number, default:0},
     create_date : {type : Date , default : new Date()}
 })
 userSchema.path('kyc.images').validate(function (value) {
