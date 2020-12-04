@@ -32,6 +32,7 @@ module.exports = async router =>{
             user:req.token_info._id,
             types: ex
         })
+        //chưa use public mà truyền vào folder public thì ai lấy được???
         img.path = '/public/kyc_img/' + img._id + ex
         img.save()
         var user = await Users.findById(req.token_info._id)
@@ -82,7 +83,7 @@ module.exports = async router =>{
     router.delete('/upload_admin',Auth.isAdminAuthenticated, async (req,res)=>{
         // const type = req.query.type
         // if(!type) return res.send({msg: 'Không có type'})
-
+        //delete cái đéo gì ở đây ???
         try {
             const files = await Upload.find({})
             const totalItem = await Upload.countDocuments({})

@@ -9,6 +9,7 @@ var Auth = require(VARIABLE.AUTH_DIR + '/auth');
 const response_express = require(VARIABLE.LIBS_DIR + '/responses').response_express
 
 module.exports = (router) => {
+    //get by slug ko phai by id
     router.get(`/get_by_id_news/:id`, async (req, res) => {
         const id = req.params.id
 
@@ -28,6 +29,8 @@ module.exports = (router) => {
         var _take = parseInt(take)
 
         var query = {}
+
+        //copy trắng trợn vkl
 
         if(search && search !== ''){
             query.$text = {$search : search}

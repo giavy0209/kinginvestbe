@@ -35,6 +35,8 @@ const uuid = require('uuid');
 // 102: khong du TRON
 //
 module.exports = (router) => {
+    //widthdraw????
+    // route nafy dùng làm gì
     router.post(`/widthdraw`, auth_controller.isAuthenticated, async (req, res) => {
         const { deposit_type, userId, toAddress, value, token } = req.body;
 

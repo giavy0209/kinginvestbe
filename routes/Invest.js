@@ -1,4 +1,5 @@
 const {Types} = require('mongoose')
+//fetch + axios ???
 const axios = require('axios')
 const fetch = require("node-fetch");
 
@@ -15,6 +16,7 @@ const Common  = require(VARIABLE.LIBS_DIR + '/commons')
 
 module.exports = router =>{
     router.post('/invest',Auth.expressMiddleware,async (req, res)=>{
+        //lấy gía tạo 1 bảng price => cron 1 tiếng 1 lần
         try{
             var address_owner
             const {value, coin} = req.body
@@ -28,10 +30,13 @@ module.exports = router =>{
                 var data = await fetch(link);
                 data = await data.json();
                 const usdValue = data.ethereum.usd * value
+
+                //check các điều kiện sync trước các điền kiện async
                 if(usdValue < 100 || usdValue >50000){
                     return response_express.exception(res,'amount Invest beyonds range of allowed Invest')
                 }
                 
+                //check các điều kiện local trước các api bên thứ 3
                 const balance = await Balances.findOne({user:id, coins:Types.ObjectId('5fa8ac7b2c89c5229459f9fc')})
                 const wallet = await Wallets.findById(balance.wallet)
 

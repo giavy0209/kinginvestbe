@@ -40,7 +40,8 @@ const newSchema = Schema({
         }
     },
     create_date: {
-        type : Date , default : new Date()
+        type : Date ,
+        default : () => new Date()
     }
 })
 

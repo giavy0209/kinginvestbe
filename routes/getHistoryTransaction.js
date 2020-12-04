@@ -18,7 +18,7 @@ module.exports = (router) => {
         if(start && end) {
             const startdate = new Date(start)
             const enddate = new Date(end)
-
+            //chỗ này nghĩa là gì?
             query.create_date = {$gte : startdate}
             query.create_date = {$lte : enddate}
         }

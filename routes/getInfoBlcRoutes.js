@@ -10,6 +10,7 @@ const response_express = require(VARIABLE.LIBS_DIR + '/responses').response_expr
 
 module.exports = router =>{
     const KDG_CONTRACT = 'TYM9eM22SCynRc5YaMxE2PX1kwv7H2rXAu';
+    //route này làm gì?
     router.get(`/:coin_type/balance/:address`,  async (req, res) => {
         const { coin_type, address } = req.params;
 
@@ -60,7 +61,7 @@ module.exports = router =>{
             return response_express.exception(res, {err: er})
         }
     });
-
+    //route này làm gì?
     router.get(`/markets/coin_price`, async (req, res) => {
         const { coin_type } = req.query;
         try

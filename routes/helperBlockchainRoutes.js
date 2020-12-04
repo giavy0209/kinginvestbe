@@ -7,6 +7,7 @@ const Auth = require(VARIABLE.AUTH_DIR + '/auth')
 const etherscan_api = "R6UWHB51I91M8H1W9A9C9M26UEYPGV392F";
 
 module.exports = router =>{
+    //route này làm gì?
     router.get(`/blockchain_transaction`, Auth.expressMiddleware, async (req, res) => {
         const { coin_type, address, begin_date, take, skip } = req.query;
         try

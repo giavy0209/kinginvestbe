@@ -27,6 +27,7 @@ module.exports = async router => {
         }
 
         if(search && search !== ''){
+            //cái này làm gì?
             query.$or = [
                 {email : {$regex : `.*${search}.*`}},
                 {ref_code : {$regex : `.*${search}.*`}},
@@ -41,11 +42,13 @@ module.exports = async router => {
         }
 
         if(sort === '3'){
+            //isLock là gì?
             query.isLock = true
         }
 
         try
         {
+            //populate chi nhiều vậy?
             let total = await Users.countDocuments(query)
             let users = await Users.find(query, {
             }, {skip: _skip, limit: _take})
@@ -57,6 +60,7 @@ module.exports = async router => {
             .populate({
                 path : 'wallets',
                 populate : {
+                    //balance đâu ra trong wallet???
                     path : 'balances'
                 }
             })
@@ -84,6 +88,7 @@ module.exports = async router => {
                 {invests : {$size : -1}}  : 
                 {_id : -1}
             );
+            //sort size là gì??
             console.log(users);
             const data = {
                 total: total,
@@ -137,6 +142,7 @@ module.exports = async router => {
             return;
         } 
 
+        //đã async  còn xài promise làm gì???
         lib_password.cryptPassword(req.body.password)
         .then(async passwordHash => {
             delete req.body.password;
@@ -147,6 +153,8 @@ module.exports = async router => {
             var user = new Users(req.body)
             user.ref_code = user._id
             // console.log(req.body.user)
+
+            //tạo 1 mảng loop qua, quá nhiều dòng rồi
             var btc_wallet = await btc_f.createBTCWallet();
             var wl1 = new Wallets({
                 user: user._id,
@@ -272,6 +280,7 @@ module.exports = async router => {
 
             return await user.save();
         }).then(async (user) => {
+            //vãi lồn 2 cái then
             await Users.findOneAndUpdate({ref_code: req.body.ref_code}, { $push: { childs: user._id} }).exec()
             response_express.success(res);
         })
@@ -297,6 +306,7 @@ module.exports = async router => {
             _id: user._id,
             email: user.email,
         }
+        //return ở đây làm gì? đã async còn promise
         return Promise.all([
             lib_password.comparePassword(req.body.password, user.password),
             lib_common.createToken(tokenPayload, 1800000),
@@ -363,6 +373,7 @@ module.exports = async router => {
     .put('/forgot-password', async ( req, res)  => {    
         try
         {
+            //có checkmissingparams sao ko xài???
             const { email, forgot_password_code, new_password } = req.body;
 
             if(email === null || email === undefined ||email.trim().length === 0 || !validator.isEmail(email)) {
@@ -406,6 +417,7 @@ module.exports = async router => {
                 return response_express.exception(res, 'email is not exist')
             }
 
+            //again đã async còn promise???
             lib_password.cryptPassword(new_password)
             .then(async result=>{
                 let edit_user = await Users.findByIdAndUpdate(find_user_by_email._id, {

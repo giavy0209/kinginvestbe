@@ -8,7 +8,6 @@ const Auth = require(VARIABLE.AUTH_DIR + '/auth')
 
 module.exports = (router)=>{
     router.post('/change_interest_rate_address_admin',Auth.isAdminAuthenticated,async (req, res)=>{
-        console.log(req.body);
         let missField = lib_common.checkMissParams(res, req.body, ["OWNER_ADDRESS_ERC20", "PRIVATE_KEY_ERC20","OWNER_ADDRESS_TRC20","PRIVATE_KEY_TRC20","INTEREST_RATE"])
         if (missField){
             console.log("Miss param at Create Field");
@@ -24,11 +23,13 @@ module.exports = (router)=>{
     })
     const saveNote = (note)=>{
         const data = JSON.stringify(note)
+        //sai path
         fs.writeFileSync('configuration.json', data)
     }
     
     const loadNote = ()=>{
         try{
+            //sai path
             const dataJson = fs.readFileSync('configuration.json').toString()
             const data = JSON.parse(dataJson)
             return data

@@ -21,6 +21,7 @@ module.exports = router =>{
             var coins
             const sender = await User.findById(idSender)
             const receiver = await User.findById(idReceiver)
+            //gom lại thành 1 cục
             if(coin === 'eth'){
                 const balanceSender = await Balances.findOne({user:idSender, coins:Types.ObjectId('5f882b3e52badd1984a7f06c')})
                 const walletSender = await Wallets.findById(balanceSender.wallet)
