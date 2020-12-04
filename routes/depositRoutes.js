@@ -33,7 +33,7 @@ module.exports = router=>{
         
         if(type === "eth") {
             if(value < 0.001) {
-                return response_express.exception(res,'No need to transfer to main walet')
+                return response_express.exception(res,'No   need to transfer to main walet')
             }
             const wallet = await Wallets.findOne({user:find_user._id, chain:Types.ObjectId('5f8a6538a492ec0834bbc7c4')})
             

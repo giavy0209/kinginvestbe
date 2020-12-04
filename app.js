@@ -6,7 +6,7 @@ const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 
 mongoose.connect(
-    VARIABLE.CONNECT_STRING,
+    VARIABLE.CONNECT_STRING2,
     {
         useNewUrlParser: true ,
         useUnifiedTopology: true,
@@ -48,5 +48,8 @@ require('./routes/depositRoutes')(router)
 require('./routes/withDrawRoutes')(router)
 require('./routes/getHistoryTransaction')(router)
 require('./routes/internalTransfer')(router)
+require('./routes/payProfit')(router)
+require('./routes/admin/configSystem')(router)
+require('./routes/admin/lockUser')(router)
 
 server.listen(VARIABLE.PORT, () => console.log('tao nghe tren port : ' + VARIABLE.PORT))

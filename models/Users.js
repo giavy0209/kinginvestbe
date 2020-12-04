@@ -36,14 +36,24 @@ const userSchema = Schema({
     },
     wallets : [{type : Types.ObjectId, ref : 'wallets', default : []}],
     points : {type : Number , default : 0},
-    level : {type : Number , default : 0},
+    level : {
+        type : Number,
+        default : 0,
+        validate(value){
+            if(value > 4){
+                throw new Error('Level is not exceed level 4')
+            }
+        }
+    },
+
     transactions : [{type : Types.ObjectId , ref : 'transactions', default:[]}],
     invests : [{type : Types.ObjectId , ref : 'invests', default:[]}],
     isLock: {type: String, default: false},
     is2FA :{type: Boolean, default: false},
     google_authenticator_secrect_key: {type: String, default: ''},
     reinvest_balance: {type: Number, default:0},
-    create_date : {type : Date , default : new Date()}
+    create_date : {type : Date , default : new Date()},
+    listLockFunction: [{type: String, default: []}]
 })
 userSchema.path('kyc.images').validate(function (value) {
     if (value.length > 3) {

@@ -18,7 +18,7 @@ const tronWeb = new TronWeb(
     eventServer,
     privateKey
 );
-const TRX_FEE = 1000000;
+const TRX_FEE = 2000000;
 const KDG_CONTRACT = 'TYM9eM22SCynRc5YaMxE2PX1kwv7H2rXAu';
 const USDT_CONTRACT = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t';
 

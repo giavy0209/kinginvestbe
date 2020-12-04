@@ -104,10 +104,10 @@ module.exports = (router)=>{
         try
         {
             const user = await User.findById(id)
-            const balanceETH = await Balances.findOne({user:Types.ObjectId(id), coins:Types.ObjectId('5f882b3e52badd1984a7f06c')})
-            const balanceTrx = await Balances.findOne({user:Types.ObjectId(id), coins:Types.ObjectId('5f882b3e52badd1984a7f06d')})
-            const balanceUsdtTrx = await Balances.findOne({user:Types.ObjectId(id), coins:Types.ObjectId('5f882b3e52badd1984a7f071')})
-            var invests = await Invest.find({user: Types.ObjectId(id)})
+            const balanceETH = await Balances.findOne({user:user._id, coins:Types.ObjectId('5fa8ac7b2c89c5229459f9fc')})
+            const balanceTrx = await Balances.findOne({user:Types.ObjectId(id), coins:Types.ObjectId('5fa8ac7b2c89c5229459f9f6')})
+            const balanceUsdtTrx = await Balances.findOne({user:Types.ObjectId(id), coins:Types.ObjectId('5fa8ac7b2c89c5229459f9f8')})
+            var invests = await Invest.find({user: user._id})
             var linkTrx = "https://api.coingecko.com/api/v3/simple/price?ids=tron&vs_currencies=usd";
             var data = await fetch(linkTrx);
             data = await data.json();
@@ -122,14 +122,14 @@ module.exports = (router)=>{
             var data = await fetch(linkTether);
             data = await data.json();
             rateUSDTTrx = data.tether.usd
-
-            totalAsset = balanceETH.balance*rateEther + balanceTrx.balance*rateTrx + balanceUsdtTrx.balance*rateUSDTTrx
+            
+            totalAsset = (balanceETH.balance*rateEther + balanceTrx.balance*rateTrx + balanceUsdtTrx.balance*rateUSDTTrx + user.reinvest_balance).toFixed(2)
+            totalProfit = (user.reinvest_balance).toFixed(2)
             for (let index = 0; index < invests.length; index++) {
-                totalProfit = totalProfit + invests[index].current_profit
                 totalInvest = totalInvest + invests[index].value
             }
-            rewardPoint = user.points
-
+            totalInvest.toFixed(2)
+            rewardPoint = (user.points).toFixed(2)
 
             return response_express.success(res,{
                 totalAsset: totalAsset,

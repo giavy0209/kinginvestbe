@@ -1,3 +1,6 @@
-const a = undefined
+// 
+const cookieParser = require('cookie-parser')
 
-console.log(Boolean(a))
+const a = cookieParser.JSONCookies(DdD31ZiW42RDWurusLtaHtBhp0oa6wpDBbe7ihbX)
+
+console.log(a);

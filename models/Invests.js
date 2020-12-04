@@ -1,7 +1,7 @@
 const {Schema , model, Types} = require('mongoose')
 
 const investSchema = Schema({
-    user : {type : Types.ObjectId , ref : 'user', required : true},
+    user : {type : Types.ObjectId , ref : 'users', required : true},
     value : {type : Number , required : true},
     current_profit : {type : Number , default : 0},
     max_profit : {
